@@ -1,0 +1,213 @@
+<div
+  class="modal fade"
+  id="updatePromotionModal_<%= promotion.promotionId %>"
+  tabindex="-1"
+  aria-labelledby="promotionUploadLabel_<%= promotion.promotionId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="promotionUploadLabel_<%= promotion.promotionId %>">
+          Update Promotion
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="promotionUpdateForm_<%= promotion.promotionId %>">
+          <div class="row">
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="promotionCode_<%= promotion.promotionId %>" class="form-label">Code</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="code_<%= promotion.promotionId %>"
+                  value="<%= promotion?.code %>"
+                  name="promotionCode"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="startDate_<%= promotion.promotionId %>" class="form-label">Start Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="startDate_<%= promotion.promotionId %>"
+                  value="<%= new Date(promotion.startDate).toISOString().slice(0, 10) %>"
+                  name="startDate"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="level_<%= promotion.promotionId %>" class="form-label">Level</label>
+                <select
+                  class="form-control"
+                  id="level_<%= promotion.promotionId %>"
+                  name="level"
+                  required
+                >
+                  <option value="Product" <%= promotion.level === 'Product' ? 'selected' : '' %>>Product</option>
+                  <option value="Order" <%= promotion.level === 'Order' ? 'selected' : '' %>>Order</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="endDate_<%= promotion.promotionId %>" class="form-label">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate_<%= promotion.promotionId %>"
+                  value="<%= new Date(promotion.endDate).toISOString().slice(0, 10) %>"
+                  name="endDate"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="status_<%= promotion.promotionId %>" class="form-label">Status</label>
+                <select
+                  class="form-control"
+                  id="status_<%= promotion.promotionId %>"
+                  name="status"
+                  required
+                >
+                  <option value="active" <%= promotion.status === 'active' ? 'selected' : '' %>>Active</option>
+                  <option value="inactive" <%= promotion.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <% promotion.conditions.forEach((condition, index) => { %>
+              <div class="col-6">
+                <div class="form-group mb-3">
+                  <label for="discountValue_<%= promotion.promotionId %>_<%= index %>" class="form-label">Discount Value</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="discountValue_<%= promotion.promotionId %>_<%= index %>"
+                    value="<%= condition.discountValue %>"
+                    name="conditions[<%= index %>].discountValue"
+                    required
+                  />
+                </div>
+                <div class="form-group mb-3">
+                  <label for="books_<%= promotion.promotionId %>_<%= index %>" class="form-label">Select Books</label>
+                  <div id="books_<%= promotion.promotionId %>_<%= index %>" class="form-control" style="height: auto;">
+                    <% books.forEach(book => { %>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="book_<%= promotion.promotionId %>_<%= index %>_<%= book.bookId %>"
+                          value="<%= book.bookId %>"
+                          name="conditions[<%= index %>].bookIds"
+                          <%= condition.books.some(condBook => condBook.bookId === book.bookId) ? 'checked' : '' %>
+                        >
+                        <label class="form-check-label" for="book_<%= promotion.promotionId %>_<%= index %>_<%= book.bookId %>">
+                          <%= book.title %>
+                        </label>
+                      </div>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-warning"
+              id="updatePromotionBtn_<%= promotion.promotionId %>"
+            >
+              <span id="updatePromotionBtnText_<%= promotion.promotionId %>">Update Promotion</span>
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                id="updatePromotionBtnSpinner_<%= promotion.promotionId %>"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('promotionUpdateForm_<%= promotion.promotionId %>').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const code = document.getElementById('code_<%= promotion.promotionId %>').value;
+    const startDate = new Date(document.getElementById('startDate_<%= promotion.promotionId %>').value).toISOString();
+    const endDate = new Date(document.getElementById('endDate_<%= promotion.promotionId %>').value).toISOString();
+    const status = document.getElementById('status_<%= promotion.promotionId %>').value;
+    const level = document.getElementById('level_<%= promotion.promotionId %>').value;
+
+    const conditions = [];
+    <% promotion.conditions.forEach((condition, index) => { %>
+      const discountValue = parseFloat(document.getElementById('discountValue_<%= promotion.promotionId %>_<%= index %>').value);
+      const bookOptions = document.querySelectorAll('#books_<%= promotion.promotionId %>_<%= index %> input[name="conditions[<%= index %>].bookIds"]:checked');
+      const bookIds = Array.from(bookOptions).map(option => option.value);
+
+      conditions.push({
+        discountValue,
+        bookIds
+      });
+    <% }) %>
+
+    const formData = {
+      code,
+      startDate,
+      endDate,
+      status,
+      level,
+      conditions
+    };
+
+    fetch(`http://localhost:3001/promotions/<%= promotion.promotionId %>`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(data => {
+          throw new Error(data.message || 'Unknown error');
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        console.log("response: ", data);
+        alert('Promotion updated successfully');
+        $('#updatePromotionModal_<%= promotion.promotionId %>').modal('hide');
+        location.reload(); // Reload the page to update the promotions list
+      } else {
+        alert('Error updating promotion: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error updating promotion: ' + error.message);
+    });
+  });
+</script>

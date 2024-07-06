@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Bookworm Project</title>
+  <script src="https://cdn.tiny.cloud/1/hc72qa2mhwopizjy8aduy9zgk0kb9nrohipfg4kdmxak55zy/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Fetch initial content
+      fetch('/about/client')
+        .then(response => response.text())
+        .then(data => {
+          tinymce.init({
+            selector: 'textarea#contentEditor',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+              { value: 'First.Name', title: 'First Name' },
+              { value: 'Email', title: 'Email' },
+            ],
+            setup: function(editor) {
+              editor.on('init', function() {
+                editor.setContent(data || '');
+              });
+            }
+          });
+        })
+        .catch(error => {
+          console.error('Error loading content:', error);
+        });
+    });
+
+    function saveContent() {
+      const content = tinymce.get('contentEditor').getContent();
+      fetch('/about/admin/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Content saved successfully:', data);
+        alert('Content saved successfully!');
+      })
+      .catch(error => {
+        console.error('Error saving content:', error);
+        alert('Failed to save content. Please try again.');
+      });
+    }
+
+    window.addEventListener('beforeunload', saveContent);
+  </script>
+</head>
+<body>
+  <header>
+    <!-- Include your header content here -->
+  </header>
+  <main>
+    <h1>About Us</h1>
+    <textarea id="contentEditor">
+      <!-- Initial content will be loaded dynamically -->
+    </textarea>
+    <button 
+    style="border: none; border: 1px solid #000; margin-top: 20px;
+    background-color: #6f6f6f; color: #fff;border-radius: 999px;
+    font-size: 12px; padding: 6px 12px;"
+    onclick="saveContent()">SAVE</button>
+  </main>
+  <footer>
+    <!-- Include your footer content here -->
+  </footer>
+</body>
+</html>

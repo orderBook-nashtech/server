@@ -1,0 +1,121 @@
+<div
+  class="modal fade"
+  id="updateAuthorModal_<%= author.authorId %>"
+  tabindex="-1"
+  aria-labelledby="authorUploadLabel_<%= author.authorId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="authorUploadLabel_<%= author.authorId %>">
+          Update Author
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="authorUpdateForm_<%= author.authorId %>">
+          <div class="mb-3">
+            <label for="authorName_<%= author.authorId %>" class="form-label">Author Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="authorName_<%= author.authorId %>"
+              value="<%= author.authorName %>"
+              name="authorName"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="biography_<%= author.authorId %>" class="form-label">Biography</label>
+            <input
+              type="text"
+              class="form-control"
+              id="biography_<%= author.authorId %>"
+              value="<%= author.biography %>"
+              name="biography"
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="close-btn"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="update-btn"
+              id="updateAuthorBtn_<%= author.authorId %>"
+            >
+              <span id="updateAuthorBtnText_<%= author.authorId %>">Update Author</span>
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                id="updateAuthorBtnSpinner_<%= author.authorId %>"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('.update-btn').on('click', function() {
+        let author = $(this).data('author');
+        $('#updateAuthorModal_<%= author.authorId %> #authorName_<%= author.authorId %>').val(author.authorName);
+        $('#updateAuthorModal_<%= author.authorId %> #biography_<%= author.authorId %>').val(author.biography);
+        console.log('Author data being set in modal:', author);
+    });
+
+    $('#authorUpdateForm_<%= author.authorId %>').on('submit', function(event) {
+        event.preventDefault();
+
+        const updateAuthorBtn = $('#updateAuthorBtn_<%= author.authorId %>');
+        const updateAuthorBtnSpinner = $('#updateAuthorBtnSpinner_<%= author.authorId %>');
+
+        updateAuthorBtn.prop('disabled', true);
+        updateAuthorBtnSpinner.removeClass('d-none');
+
+        let formData = new FormData(this);
+        let authorId = '<%= author.authorId %>';
+        let data = {
+            authorName: formData.get('authorName'),
+            biography: formData.get('biography')
+        };
+
+        $.ajax({
+            url: `http://localhost:3001/authors/${authorId}`,
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(response) {
+                console.log('Success:', response);
+                alert('Author updated successfully');
+                $('#updateAuthorModal_<%= author.authorId %>').modal('hide');
+                $('#authorUpdateForm_<%= author.authorId %>')[0].reset();
+                updateAuthorBtn.prop('disabled', false);
+                updateAuthorBtnSpinner.addClass('d-none');
+                location.reload(); // Reload the page to see the updated author list
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText);
+                alert('Failed to update author. Please check the data and try again.');
+                updateAuthorBtn.prop('disabled', false);
+                updateAuthorBtnSpinner.addClass('d-none');
+            }
+        });
+    });
+  });
+</script>

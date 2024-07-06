@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories List</title>
+</head>
+<body>
+
+<div>
+  <div class="d-flex justify-content-between align-content-center my-3">
+    <h4 class="text-muted">List of Categories</h4>
+    <button
+      type="button"
+      class="btn btn-success"
+      data-bs-toggle="modal"
+      data-bs-target="#createCategoryModal"
+    >
+      Create Category
+    </button>
+  </div>
+  <div class="container">
+    <table class="table table-hover" style="cursor: pointer">
+      <thead class="rounded-top">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% categories.forEach(category => { %>
+        <tr>
+          <td>
+            <p
+              class="text-truncate"
+              style="max-width: 150px"
+              title="<%= category.categoryId %>"
+            >
+              <%= category.categoryId %>
+            </p>
+          </td>
+          <td>
+            <p
+              class="text-truncate"
+              style="max-width: 150px"
+              title="<%= category.name %>"
+            >
+              <%= category.name %>
+            </p>
+          </td>
+          <td>
+            <% if (category.isActive) { %>
+            <span class="badge bg-success">Active</span>
+            <% } else { %>
+            <span class="badge bg-secondary">Inactive</span>
+            <% } %>
+          </td>
+          <td>
+            <button
+              type="button"
+              class="update-btn"
+              data-bs-toggle="modal"
+              data-bs-target="#updateCategoryModal_<%= category.categoryId %>"
+            >
+              <i class="lni lni-pencil-alt"></i>
+            </button>
+            <button
+              type="button"
+              class="<%= category.isActive ? 'delete-btn' : 'btn btn-secondary disabled' %>"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteCategoryModal_<%= category.categoryId %>"
+            >
+              <i class="lni lni-trash-can"></i>
+            </button>
+          </td>
+        </tr>
+        <%- include('../modals/categories/updateCategory.ejs', { category }); %>
+        <%- include('../modals/categories/deleteCategory.ejs', { category }); %>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../modals/categories/createCategory.ejs') %>
+
+</body>
+</html>

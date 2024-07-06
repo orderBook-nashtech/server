@@ -1,0 +1,179 @@
+<div class="modal fade" id="updateUserModal_<%= user.userId %>" tabindex="-1" role="dialog" aria-labelledby="updateUserModalLabel_<%= user.userId %>" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateUserModalLabel_<%= user.userId %>">Update A User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateUserForm_<%= user.userId %>" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="userId_<%= user.userId %>"><i class="fa-solid fa-pen"></i> ID</label>
+                                <input type="text" id="userId_<%= user.userId %>" value="<%= user.userId %>" class="form-control mt-2" name="userId" readonly>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="firstName_<%= user.userId %>"><i class="fa-solid fa-pen"></i> First Name</label>
+                                <input type="text" value="<%= user.firstName %>" id="firstName_<%= user.userId %>" class="form-control mt-2" name="firstName">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="lastName_<%= user.userId %>"><i class="fa-solid fa-pen"></i> Last Name</label>
+                                <input type="text" value="<%= user.lastName %>" id="lastName_<%= user.userId %>" class="form-control mt-2" name="lastName">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="email_<%= user.userId %>"><i class="fa-solid fa-envelope"></i> Email</label>
+                                <input type="email" value="<%= user.email %>" id="email_<%= user.userId %>" class="form-control mt-2" name="email">
+                            </div>
+                            <div class="form-check form-switch form-group mb-2">
+                                <label class="form-check-label" for="isActive_<%= user.userId %>">Is Active</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="isActive_<%= user.userId %>" name="isActive" <%= user.isActive ? 'checked' : '' %>>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="phoneNumber_<%= user.userId %>"><i class="fa-solid fa-phone"></i> Phone</label>
+                                <input type="text" value="<%= user.phoneNumber %>" id="phoneNumber_<%= user.userId %>" class="form-control mt-2" name="phoneNumber">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="image_<%= user.userId %>"><i class="fa-solid fa-image"></i> Image</label>
+                                <input type="file" id="image_<%= user.userId %>" class="form-control mt-2" name="image">
+                                <img id="imagePreview_<%= user.userId %>" src="<%= user.image ? user.image : '#' %>" alt="Image Preview" style="display:<%= user.image ? 'block' : 'none' %>; width: 100px; height: auto; margin-top: 10px;">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="address_<%= user.userId %>"><i class="fa-solid fa-location-dot"></i> Address</label>
+                                <input type="text" value="<%= user.address %>" id="address_<%= user.userId %>" class="form-control mt-2" name="address">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger d-none" id="errorAlert_<%= user.userId %>"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="updateButton_<%= user.userId %>">
+                            <span id="updateButtonText_<%= user.userId %>">Submit</span>
+                            <span class="spinner-border spinner-border-sm d-none" id="updateButtonSpinner_<%= user.userId %>" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.update-btn').on('click', function() {
+            let user = $(this).data('user');
+            const modalId = `#updateUserModal_${user.userId}`;
+
+            $(`${modalId} #userId_${user.userId}`).val(user.userId);
+            $(`${modalId} #firstName_${user.userId}`).val(user.firstName);
+            $(`${modalId} #lastName_${user.userId}`).val(user.lastName);
+            $(`${modalId} #email_${user.userId}`).val(user.email);
+            $(`${modalId} #phoneNumber_${user.userId}`).val(user.phoneNumber);
+            $(`${modalId} #isActive_${user.userId}`).prop('checked', user.isActive);
+            $(`${modalId} #address_${user.userId}`).val(user.address);
+
+            if (user.image) {
+                $(`${modalId} #imagePreview_${user.userId}`).attr('src', user.image).show();
+            } else {
+                $(`${modalId} #imagePreview_${user.userId}`).hide();
+            }
+        });
+
+        $('#updateUserForm_<%= user.userId %>').on('submit', function(event) {
+            event.preventDefault();
+
+            const updateButton = $(`#updateButton_<%= user.userId %>`);
+            const updateButtonText = $(`#updateButtonText_<%= user.userId %>`);
+            const updateButtonSpinner = $(`#updateButtonSpinner_<%= user.userId %>`);
+
+            updateButtonText.addClass('d-none');
+            updateButtonSpinner.removeClass('d-none');
+            updateButton.prop('disabled', true);
+
+            let formData = new FormData(this);
+            let isActiveValue = $(`#isActive_<%= user.userId %>`).is(':checked');
+            let userId = $(`#userId_<%= user.userId %>`).val();
+
+            // Email validation
+            let email = $(`#email_<%= user.userId %>`).val();
+            if (!validateEmail(email)) {
+                $(`#errorAlert_<%= user.userId %>`).text('Please enter a valid email address.').removeClass('d-none');
+                turnOffSpinner(updateButton, updateButtonText, updateButtonSpinner);
+                return;
+            }
+
+            let data = {
+                firstName: $(`#firstName_<%= user.userId %>`).val(),
+                lastName: $(`#lastName_<%= user.userId %>`).val(),
+                email: email,
+                phoneNumber: $(`#phoneNumber_<%= user.userId %>`).val(),
+                isActive: isActiveValue,
+                address: $(`#address_<%= user.userId %>`).val()
+            };
+
+            if ($(`#image_<%= user.userId %>`)[0].files.length > 0) {
+                let imageFile = $(`#image_<%= user.userId %>`)[0].files[0];
+                let reader = new FileReader();
+
+                reader.readAsDataURL(imageFile);
+
+                reader.onload = function() {
+                    let base64Image = reader.result.split(',')[1];
+                    data.image = base64Image;
+                    updateUser(userId, data);
+                };
+
+                reader.onerror = function(error) {
+                    console.error('Error reading image:', error);
+                    $(`#errorAlert_<%= user.userId %>`).text('Failed to read image. Please try again.').removeClass('d-none');
+                    turnOffSpinner(updateButton, updateButtonText, updateButtonSpinner);
+                };
+            } else {
+                updateUser(userId, data);
+            }
+        });
+
+        function updateUser(userId, data) {
+            const token = localStorage.getItem('authToken'); // Adjust this line to retrieve the token from the appropriate source
+            $.ajax({
+                url: `http://localhost:3001/user/${userId}`,
+                type: 'PUT',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    console.log('Success:', response);
+                    alert('User updated successfully');
+                    $(`#updateUserModal_${userId}`).modal('hide');
+                    $(`#updateUserForm_${userId}`)[0].reset();
+                    $(`#errorAlert_${userId}`).addClass('d-none');
+                    turnOffSpinner($(`#updateButton_${userId}`), $(`#updateButtonText_${userId}`), $(`#updateButtonSpinner_${userId}`));
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        $(`#errorAlert_${userId}`).text('Error: ' + xhr.responseJSON.message).removeClass('d-none');
+                    } else {
+                        $(`#errorAlert_${userId}`).text('Failed to update user. Please check the data and try again.').removeClass('d-none');
+                    }
+                    turnOffSpinner($(`#updateButton_${userId}`), $(`#updateButtonText_${userId}`), $(`#updateButtonSpinner_${userId}`));
+                }
+            });
+        }
+
+        function validateEmail(email) {
+            const re = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function turnOffSpinner(updateButton, updateButtonText, updateButtonSpinner) {
+            updateButtonText.removeClass('d-none');
+            updateButtonSpinner.addClass('d-none');
+            updateButton.prop('disabled', false);
+        }
+    });
+</script>

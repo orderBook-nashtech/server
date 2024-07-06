@@ -1,0 +1,78 @@
+<!-- Delete Category Modal -->
+<div
+  class="modal fade"
+  id="deleteShipperModal_<%= shipper.shipperId %>"
+  tabindex="-1"
+  aria-labelledby="deleteShipperLabel_<%= shipper.shipperId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteShipperLabel_<%= shipper.shipperId %>">
+          Delete Shipper
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to delete this shipper <b><%= shipper.shipperName %></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+        <form id="shipperDeleteForm_<%= shipper.shipperId %>" class="d-inline">
+          <button
+            type="submit"
+            class="btn btn-danger"
+          >
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('shipperDeleteForm_<%= shipper.shipperId %>').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const deleteCategoryShipperBtn = event.target.querySelector('button[type="submit"]');
+
+      // Disable the button to prevent multiple clicks
+      deleteCategoryShipperBtn.disabled = true;
+
+      fetch('/shippers/<%= shipper.shipperId %>', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            location.reload(); // Reload the page to see the updated shipper list
+          } else {
+            alert(data.message || 'Failed to delete shipper');
+            deleteShipperShipperBtn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error deleting shipper');
+          deleteShipperShipperBtn.disabled = false;
+        });
+    });
+  });
+</script>

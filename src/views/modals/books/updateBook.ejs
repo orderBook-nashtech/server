@@ -1,0 +1,196 @@
+<!-- Update Book Modal -->
+<div class="modal fade" id="updateBookModal_<%= book.bookId %>" tabindex="-1" aria-labelledby="bookUploadLabel_<%= book.bookId %>" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookUploadLabel_<%= book.bookId %>">Update Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateBookForm_<%= book.bookId %>" enctype="multipart/form-data">
+                    <input type="hidden" id="bookId" name="bookId" value="<%= book.bookId %>">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="title_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Title</label>
+                                <input type="text" id="title_<%= book.bookId %>" class="form-control mt-2" value="<%= book.title %>" name="title">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="description_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Description</label>
+                                <input type="text" id="description_<%= book.bookId %>" class="form-control mt-2" value="<%= book.description %>" name="description">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="image_<%= book.bookId %>"><i class="fa-solid fa-image"></i> Image</label>
+                                <input type="file" id="image_<%= book.bookId %>" class="form-control mt-2" name="image">
+                                <img src="<%= book.bookImage %>" alt="Book Image" width="150">
+                            </div>
+                            <div class="form-check form-switch form-group mb-2">
+                                <label class="form-check-label" for="isActive_<%= book.bookId %>">Is Active</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="isActive_<%= book.bookId %>" name="isActive" <%= book.isActive ? 'checked' : '' %> style="margin-left: 20px;">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="authorSelect_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Author Name</label>
+                                <select id="authorSelect_<%= book.bookId %>" class="form-control mt-2" name="authorId" aria-valuenow="<%= book.author.authorName %>"></select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="unitPrice_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Unit Price</label>
+                                <input type="number" id="unitPrice_<%= book.bookId %>" class="form-control mt-2" value="<%= book.unitPrice %>" name="unitPrice">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="rating_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Rating</label>
+                                <input type="number" min="0" max="5" id="rating_<%= book.bookId %>" value="<%= book.rating %>" class="form-control mt-2" name="rating">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="quantityInStock_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Quantity In Stock</label>
+                                <input type="number" id="quantityInStock_<%= book.bookId %>" class="form-control mt-2" value="<%= book.quantityInStock %>" name="quantityInStock">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="categorySelect_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Category Name</label>
+                                <select id="categorySelect_<%= book.bookId %>" class="form-control mt-2" name="categoryId" aria-valuenow="<%= book.category.name %>"></select>
+                            </div>
+                            <div class="form-check form-switch form-group mb-2">
+                                <label class="form-check-label" for="onSale_<%= book.bookId %>">On Sale</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="onSale_<%= book.bookId %>" name="onSale" <%= book.onSale ? 'checked' : '' %> style="margin-left: 20px;">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="salePrice_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Sale Price</label>
+                                <input type="number" id="salePrice_<%= book.bookId %>" class="form-control mt-2" value="<%= book.salePrice %>" name="salePrice">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="saleStartDate_<%= book.bookId %>"><i class="fa-solid fa-calendar"></i> Sale Start Date</label>
+                                <input type="date" id="saleStartDate_<%= book.bookId %>" class="form-control mt-2" value="<%= book.saleStartDate ? book.saleStartDate.toISOString().substring(0, 10) : '' %>" name="saleStartDate">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="saleEndDate_<%= book.bookId %>"><i class="fa-solid fa-calendar"></i> Sale End Date</label>
+                                <input type="date" id="saleEndDate_<%= book.bookId %>" class="form-control mt-2" value="<%= book.saleEndDate ? book.saleEndDate.toISOString().substring(0, 10) : '' %>" name="saleEndDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="close-btn" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="update-btn" id="updateBookBtn_<%= book.bookId %>">
+                            <span id="updateBookBtnText_<%= book.bookId %>">Update Book</span>
+                            <span class="spinner-border spinner-border-sm d-none" id="updateBookBtnSpinner_<%= book.bookId %>" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        function fetchAuthors(bookId, selectedAuthorId) {
+            $.ajax({
+                url: 'http://localhost:3001/authors',
+                type: 'GET',
+                success: function(response) {
+                    if (Array.isArray(response.data)) {
+                        let authorSelect = $(`#authorSelect_${bookId}`);
+                        authorSelect.empty(); 
+                        authorSelect.append('<option value="">Select an Author</option>');
+                        response.data.forEach(author => {
+                            let selected = author.authorId === selectedAuthorId ? 'selected' : '';
+                            authorSelect.append(`<option value="${author.authorId}" ${selected}>${author.authorName}</option>`);
+                        });
+                    } else {
+                        console.error('Error: Expected an array of authors');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching authors:', status, error);
+                }
+            });
+        }
+
+        function fetchCategories(bookId, selectedCategoryId) {
+            $.ajax({
+                url: 'http://localhost:3001/categories',
+                type: 'GET',
+                success: function(response) {
+                    if (Array.isArray(response.data)) {
+                        let categorySelect = $(`#categorySelect_${bookId}`);
+                        categorySelect.empty(); 
+                        categorySelect.append('<option value="">Select a Category</option>');
+                        response.data.forEach(category => {
+                            let selected = category.categoryId === selectedCategoryId ? 'selected' : '';
+                            categorySelect.append(`<option value="${category.categoryId}" ${selected}>${category.name}</option>`);
+                        });
+                    } else {
+                        console.error('Error: Expected an array of categories');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching categories:', status, error);
+                }
+            });
+        }
+
+        $('#updateBookModal_<%= book.bookId %>').on('show.bs.modal', function() {
+            fetchAuthors('<%= book.bookId %>', '<%= book.authorId %>');
+            fetchCategories('<%= book.bookId %>', '<%= book.categoryId %>');
+        });
+
+        $('#updateBookForm_<%= book.bookId %>').on('submit', function(event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+            let isActiveValue = $('#isActive_<%= book.bookId %>').is(':checked');
+            let onSaleValue = $('#onSale_<%= book.bookId %>').is(':checked');
+
+            $.ajax({
+                url: 'http://localhost:3001/books/upload',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    let imageUrl = response.imageUrl;
+
+                    let data = {
+                        title: formData.get('title'),
+                        description: formData.get('description'),
+                        unitPrice: parseFloat(formData.get('unitPrice')),
+                        rating: parseInt(formData.get('rating')),
+                        quantityInStock: parseInt(formData.get('quantityInStock')),
+                        isActive: isActiveValue,
+                        bookImage: imageUrl,
+                        categoryId: formData.get('categoryId'),
+                        authorId: formData.get('authorId'),
+                        onSale: onSaleValue,
+                        salePrice: formData.get('salePrice') ? parseFloat(formData.get('salePrice')) : null,
+                        saleStartDate: formData.get('saleStartDate') ? new Date(formData.get('saleStartDate')) : null,
+                        saleEndDate: formData.get('saleEndDate') ? new Date(formData.get('saleEndDate')) : null,
+                    };
+
+                    $.ajax({
+                        url: `http://localhost:3001/books/${formData.get('bookId')}`,
+                        type: 'PUT',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                        success: function(response) {
+                            $('#updateBookModal_<%= book.bookId %>').modal('hide');
+                            $('#updateBookForm_<%= book.bookId %>')[0].reset();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error updating book:', status, error);
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                alert('Error: ' + xhr.responseJSON.message);
+                            } 
+                            else {
+                                alert('Failed to update book. Please check the data and try again.');
+                            }
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error uploading image:', status, error);
+                    alert('Failed to upload image. Please try again.');
+                }
+            });
+        });
+    });
+</script>

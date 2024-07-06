@@ -1,0 +1,70 @@
+<!-- User Creation Modal Form -->
+<div class="modal fade" id="createAuthorModal" tabindex="-1" role="dialog" aria-labelledby="createAuthorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createAuthorModalLabel">Create A New Author</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createAuthorForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group mb-2">
+                                <label for="authorName"><i class="fa-solid fa-pen"></i> Author Name</label>
+                                <input type="text" id="authorName" class="form-control mt-2" name="authorName" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="biography"><i class="fa-solid fa-pen"></i> Biography</label>
+                                <input type="text" id="biography" class="form-control mt-2" name="biography" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn close-btn" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#createAuthorForm').on('submit', function(event) {
+            event.preventDefault();
+    
+            let formData = new FormData(this);
+    
+            let data = {
+                    authorName: $('#authorName').val(),
+                    biography: $('#biography').val()
+                };
+    
+                $.ajax({
+                    url: 'http://localhost:3001/authors',
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        console.log('Success:', response);
+                        alert('Author created successfully');
+                        $('#createAuthorModal').modal('hide');
+                        $('#createAuthorForm')[0].reset();
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr.responseText);
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert('Error: ' + xhr.responseJSON.message);
+                        } else {
+                            alert('Failed to create user. Please check the data and try again.');
+                        }
+                    }
+                });
+        });
+    });
+    
+    </script>
+    

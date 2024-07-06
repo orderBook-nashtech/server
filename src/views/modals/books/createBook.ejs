@@ -1,0 +1,228 @@
+<!-- Create Book Modal -->
+<div class="modal fade" id="createBookModal" tabindex="-1" role="dialog" aria-labelledby="createBookLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createBookLabel">Create A New Book</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createBookForm" enctype="multipart/form-data">
+          <input type="hidden" id="bookId" name="bookId">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group mb-2">
+                <label for="title"><i class="fa-solid fa-pen"></i> Title</label>
+                <input type="text" id="title" class="form-control mt-2" name="title" required>
+              </div>
+              <div class="form-group mb-2">
+                <label for="description"><i class="fa-solid fa-pen"></i> Description</label>
+                <input type="text" id="description" class="form-control mt-2" name="description" required>
+              </div>
+              <div class="form-group mb-2">
+                <label for="image"><i class="fa-solid fa-image"></i> Image</label>
+                <input type="file" id="image" class="form-control mt-2" name="image" required>
+              </div>
+              <div class="form-check form-switch form-group mb-2">
+                <label class="form-check-label" for="isActive">Is Active</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="isActive" name="isActive" checked style="margin-left: 20px;">
+              </div>
+              <div class="form-group mb-2">
+                <label for="authorSelect"><i class="fa-solid fa-pen"></i> Author Name</label>
+                <select id="authorSelect" class="form-control mt-2" name="authorId" required></select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group mb-2">
+                <label for="unitPrice"><i class="fa-solid fa-pen"></i> Unit Price</label>
+                <input type="number" id="unitPrice" class="form-control mt-2" name="unitPrice" required>
+              </div>
+              <div class="form-group mb-2">
+                <label for="rating"><i class="fa-solid fa-pen"></i> Rating</label>
+                <input type="number" min="0" max="5" id="rating" class="form-control mt-2" name="rating" required>
+              </div>
+              <div class="form-group mb-2">
+                <label for="quantityInStock"><i class="fa-solid fa-pen"></i> Quantity In Stock</label>
+                <input type="number" id="quantityInStock" class="form-control mt-2" name="quantityInStock" required>
+              </div>
+              <div class="form-group mb-2">
+                <label for="categorySelect"><i class="fa-solid fa-pen"></i> Category Name</label>
+                <select id="categorySelect" class="form-control mt-2" name="categoryId" required></select>
+              </div>
+            </div>
+          </div>
+          <!-- Sale Information -->
+          <div class="row mt-3">
+            <div class="col-6">
+              <div class="form-check form-switch form-group mb-2">
+                <label class="form-check-label" for="onSale">On Sale</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="onSale" name="onSale" style="margin-left: 20px;">
+              </div>
+              <div class="form-group mb-2">
+                <label for="salePrice"><i class="fa-solid fa-pen"></i> Sale Price</label>
+                <input type="number" id="salePrice" class="form-control mt-2" name="salePrice">
+              </div>
+              <div class="form-group mb-2">
+                <label for="saleStartDate"><i class="fa-solid fa-calendar"></i> Sale Start Date</label>
+                <input type="date" id="saleStartDate" class="form-control mt-2" name="saleStartDate">
+              </div>
+              <div class="form-group mb-2">
+                <label for="saleEndDate"><i class="fa-solid fa-calendar"></i> Sale End Date</label>
+                <input type="date" id="saleEndDate" class="form-control mt-2" name="saleEndDate">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // Function to fetch and populate authors
+    function fetchAuthors() {
+      console.log('Fetching authors...');
+      $.ajax({
+        url: 'http://localhost:3001/authors', // Adjust the URL to your authors endpoint
+        type: 'GET',
+        success: function(response) {
+          console.log('Fetched authors:', response);
+          if (Array.isArray(response.data)) {
+            let authorSelect = $('#authorSelect');
+            authorSelect.empty(); // Clear existing options
+            authorSelect.append('<option value="">Select an Author</option>'); // Default option
+            response.data.forEach(author => {
+              console.log('Adding author:', author);
+              authorSelect.append(`<option value="${author.authorId}">${author.authorName}</option>`);
+            });
+          } else {
+            console.error('Error: Expected an array of authors');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('Error fetching authors:', status, error);
+          console.log(xhr.responseText);
+        }
+      });
+    }
+
+    // Function to fetch and populate categories
+    function fetchCategories() {
+      console.log('Fetching categories...');
+      $.ajax({
+        url: 'http://localhost:3001/categories', // Adjust the URL to your categories endpoint
+        type: 'GET',
+        success: function(response) {
+          console.log('Fetched categories:', response);
+          if (Array.isArray(response.data)) {
+            let categorySelect = $('#categorySelect');
+            categorySelect.empty(); // Clear existing options
+            categorySelect.append('<option value="">Select a Category</option>'); // Default option
+            response.data.forEach(category => {
+              console.log('Adding category:', category);
+              categorySelect.append(`<option value="${category.categoryId}">${category.name}</option>`);
+            });
+          } else {
+            console.error('Error: Expected an array of categories');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('Error fetching categories:', status, error);
+          console.log(xhr.responseText);
+        }
+      });
+    }
+
+    // Populate select elements when the modal is opened
+    $('#createBookModal').on('show.bs.modal', function() {
+      console.log('Modal opened, fetching authors and categories...');
+      fetchAuthors();
+      fetchCategories();
+    });
+
+    // Handle form submission
+    $('#createBookForm').on('submit', function(event) {
+      event.preventDefault();
+
+      let formData = new FormData(this);
+      let isActiveValue = $('#isActive').is(':checked');
+      let onSaleValue = $('#onSale').is(':checked');
+
+      // Log formData contents for debugging
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      // Upload image file
+      $.ajax({
+        url: 'http://localhost:3001/books/upload',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+          console.log('Uploaded image:', response);
+          let imageUrl = response.imageUrl;
+
+          // Create book with image URL
+          let data = {
+            title: formData.get('title'),
+            description: formData.get('description'),
+            unitPrice: parseFloat(formData.get('unitPrice')), // Ensure unitPrice is a number
+            rating: parseInt(formData.get('rating')), // Ensure rating is a number
+            quantityInStock: parseInt(formData.get('quantityInStock')), // Ensure quantityInStock is a number
+            isActive: isActiveValue,
+            bookImage: imageUrl, // Ensure bookImage is correctly set
+            categoryId: formData.get('categoryId'), // Use selected category ID
+            authorId: formData.get('authorId'), // Use selected author ID
+            onSale: onSaleValue,
+            salePrice: formData.get('salePrice') ? parseFloat(formData.get('salePrice')) : null, // Ensure salePrice is a number
+            saleStartDate: formData.get('saleStartDate') ? new Date(formData.get('saleStartDate')) : null,
+            saleEndDate: formData.get('saleEndDate') ? new Date(formData.get('saleEndDate')) : null,
+          };
+
+          console.log('Book data to be created:', data);
+
+          // Ensure all required fields are present
+          if (!data.title || !data.description || isNaN(data.unitPrice) ||
+              isNaN(data.rating) || isNaN(data.quantityInStock) ||
+              !data.categoryId || !data.authorId) {
+            alert('Please fill in all required fields correctly.');
+            return;
+          }
+
+          $.ajax({
+            url: 'http://localhost:3001/books',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(response) {
+              console.log('Book created successfully:', response);
+              $('#createBookModal').modal('hide');
+              $('#createBookForm')[0].reset();
+            },
+            error: function(xhr, status, error) {
+              console.error('Error creating book:', status, error);
+              console.log(xhr.responseText);
+              if (xhr.responseJSON && xhr.responseJSON.message) {
+                alert('Error: ' + xhr.responseJSON.message);
+              } else {
+                alert('Failed to create book. Please check the data and try again.');
+              }
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error uploading image:', status, error);
+          console.log(xhr.responseText);
+          alert('Failed to upload image. Please try again.');
+        }
+      });
+    });
+  });
+</script>

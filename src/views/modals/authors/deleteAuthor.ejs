@@ -1,0 +1,58 @@
+<div class="modal fade" id="deleteAuthorModal_<%= author.authorId %>" tabindex="-1" aria-labelledby="deleteAuthorLabel_<%= author.authorId %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteAuthorLabel_<%= author.authorId %>">Delete An Author</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Do you want to delete this author <b><%= author.authorName %></b>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <form id="authorDeleteForm_<%= author.authorId %>" class="d-inline">
+            <input type="hidden" name="authorId" value="<%= author.authorId %>">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const deleteForm = document.getElementById('authorDeleteForm_<%= author.authorId %>');
+      deleteForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+  
+        const deleteAuthorBtn = event.target.querySelector('button[type="submit"]');
+  
+        // Disable the button to prevent multiple clicks
+        // deleteAuthorBtn.disabled = true;
+  
+        fetch(`/authors/${event.target.authorId.value}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteAuthorModal_<%= author.authorId %>'));
+            deleteModal.hide();
+            location.reload(); // Reload the page to see the updated author list
+          } else {
+            alert(data.message || 'Failed to delete author');
+            // deleteAuthorBtn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error deleting author');
+        //   deleteAuthorBtn.disabled = false;
+        });
+      });
+    });
+  </script>
+  

@@ -1,0 +1,54 @@
+<div class="modal fade" id="deletePromotionModal_<%= promotion.promotionId %>" tabindex="-1" aria-labelledby="deletePromotionLabel_<%= promotion.promotionId %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletePromotionLabel_<%= promotion.promotionId %>">Delete An Promotion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Do you want to delete this promotion <b><%= promotion.type %></b>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <form id="promotionDeleteForm_<%= promotion.promotionId %>" class="d-inline">
+            <input type="hidden" name="promotionId" value="<%= promotion.promotionId %>">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const deleteForm = document.getElementById('promotionDeleteForm_<%= promotion.promotionId %>');
+      deleteForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+  
+        const deletePromotionBtn = event.target.querySelector('button[type="submit"]');
+        fetch(`/promotions/${event.target.promotionId.value}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deletePromotionModal_<%= promotion.promotionId %>'));
+            deleteModal.hide();
+            location.reload(); // Reload the page to see the updated author list
+          } else {
+            alert(data.message || 'Failed to delete promotion');
+            // deleteAuthorBtn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error deleting author');
+        //   deleteAuthorBtn.disabled = false;
+        });
+      });
+    });
+  </script>
+  

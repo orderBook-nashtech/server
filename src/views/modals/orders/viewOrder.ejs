@@ -1,0 +1,182 @@
+<!-- Update Category Modal -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../../public/css/style.css">
+</head>
+<body>
+  <div
+  class="modal fade"
+  id="viewOrderModal_<%= order.orderId %>"
+  tabindex="-1"
+  aria-labelledby="orderViewLabel_<%= order.orderId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderViewLabel_<%= order.orderId %>">
+          View Order Details
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="orderUpdateForm_<%= order.orderId %>">
+          <div class="row">
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="orderId_<%= order.orderId %>" class="form-label">Order ID</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="orderId_<%= order.orderId %>"
+                  value="<%= order.orderId %>"
+                  name="orderId"
+                  required
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="totalPrice_<%= order.orderId %>" class="form-label">Total Price</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="totalPrice_<%= order.orderId %>"
+                  value="<%= order.totalPrice %>"
+                  name="totalPrice"
+                  required
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="status_<%= order.orderId %>" class="form-label">Status</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="status_<%= order.orderId %>"
+                  value="<%= order.status %>"
+                  name="status"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="orderDate_<%= order.orderId %>" class="form-label">Order Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="orderDate_<%= order.orderId %>"
+                  value="<%= order.orderDate ? new Date(order.orderDate).toISOString().split('T')[0] : '' %>"
+                  name="orderDate"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="shipAddress_<%= order.orderId %>" class="form-label">Ship Address</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="shipAddress_<%= order.orderId %>"
+                  value="<%= order.shipAddress %>"
+                  name="shipAddress"
+                  disabled
+                />
+              </div>
+            </div>
+  
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="shippedDate_<%= order.orderId %>" class="form-label">Shipped Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="shippedDate_<%= order.orderId %>"
+                  value="<%= order.shippedDate ? new Date(order.shippedDate).toISOString().split('T')[0] : '' %>"
+                  name="shippedDate"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="paymentMethod_<%= order.orderId %>" class="form-label">Payment Method</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="paymentMethod_<%= order.orderId %>"
+                  value="<%= order.paymentMethod %>"
+                  name="paymentMethod"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="userEmail_<%= order.orderId %>" class="form-label">User Email</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="userEmail_<%= order.orderId %>"
+                  value="<%= order.user.email %>"
+                  name="userEmail"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="phoneNumber_<%= order.orderId %>" class="form-label">Phone Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="phoneNumber_<%= order.orderId %>"
+                  value="<%= order.user?.phoneNumber %>"
+                  name="phoneNumber"
+                  disabled
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="orderItems_<%= order.orderId %>" class="form-label">Order Items</label>
+                <textarea
+                  class="form-control"
+                  id="orderItems_<%= order.orderId %>"
+                  name="orderItems"
+                  rows="4"
+                  disabled
+                ><%= order.orderItems.map(item => item.book.title).join(', ') %></textarea>
+              </div>
+              <!-- <div class="mb-3">
+                <label for="shipperId_<%= order.orderId %>" class="form-label">Shipper Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="shipperId_<%= order.orderId %>"
+                  value="<%= order?.shipper?.shipperName %>"
+                  name="shipperId"
+                  required
+                  disabled
+                />
+              </div> -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #ccc;
+              color: #000;
+              border-radius: 999px;
+              "
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

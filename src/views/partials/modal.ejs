@@ -1,0 +1,60 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    Launch static backdrop modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createUserModalLabel">Create New User</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form fields for creating a user -->
+          <form id="createUserForm">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" form="createUserForm" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        var name = document.getElementById('name').value;
+        var email = document.getElementById('email').value;
+        var message = document.getElementById('message').value;
+
+        console.log('Name:', name); 
+        console.log('Email:', email); 
+        console.log('Message:', message); 
+        toggleVisibility('popup-wrapper');
+    });
+
+    function toggleVisibility(id) {
+        var e = document.getElementById(id);
+        if (e.style.display === 'block' || e.style.display === '') {
+            e.style.display = 'none';
+        } else {
+            e.style.display = 'block';
+        }
+    }
+</script>

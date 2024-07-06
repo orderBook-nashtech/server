@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "module": "commonjs", // CommonJS module system
+    "declaration": true, // Generates corresponding '.d.ts' files
+    "removeComments": true, // Remove comments from emitted files
+    "emitDecoratorMetadata": true, // Emits decorator metadata
+    "experimentalDecorators": true, // Enables experimental support for decorators
+    "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
+    "target": "ES2021", // Target latest ECMAScript version
+    "sourceMap": true, // Generates source map files
+    "outDir": "./dist", // Redirect output structure to the directory
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"]
+    },
+    "incremental": true, // Enable incremental compilation
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "strictNullChecks": false, // Disable strict null checks
+    "noImplicitAny": false, // Allow implicit 'any' types
+    "strictBindCallApply": false, // Disable strict checking of the `bind`, `call`, and `apply` methods
+    "forceConsistentCasingInFileNames": false, // Disable consistency check for file names
+    "noFallthroughCasesInSwitch": false // Disable error reporting for fallthrough cases in switch statements
+  },
+  "include": ["src/**/*", "db"], // Include all TypeScript files under src
+  "exclude": ["node_modules", "dist"] // Exclude node_modules and dist directories
+}

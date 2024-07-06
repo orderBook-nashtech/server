@@ -1,0 +1,72 @@
+<div class="modal fade" id="viewPromotionModal_<%= promotion.promotionId %>" tabindex="-1" aria-labelledby="promotionViewLabel_<%= promotion.promotionId %>" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="promotionViewLabel_<%= promotion.promotionId %>">
+          View Promotion
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="promotionViewForm_<%= promotion.promotionId %>">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group mb-2 row">
+                <div class="col-6">
+                  <label for="code"><i class="fa-solid fa-pen"></i> Code</label>
+                  <input type="text" id="code" class="form-control mt-2" name="code" required disabled value="<%= promotion.code %>">
+                </div>
+                <div class="col-6">
+                  <label for="startDate"><i class="fa-solid fa-pen"></i> Start Date</label>
+                  <input type="date" id="startDate" class="form-control mt-2" name="startDate" disabled required value="<%= new Date(promotion.startDate).toISOString().slice(0, 10) %>">
+                </div>
+              </div>
+              <div class="form-group mb-2 row">
+                <div class="col-6">
+                  <label for="endDate"><i class="fa-solid fa-pen"></i> End Date</label>
+                  <input type="date" id="endDate" class="form-control mt-2" disabled name="endDate" required value="<%= new Date(promotion.endDate).toISOString().slice(0, 10) %>">
+                </div>
+                <div class="col-6">
+                  <label for="status"><i class="fa-solid fa-pen"></i> Status</label>
+                  <input type="text" id="status" class="form-control mt-2" disabled name="status" required value="<%= promotion.status %>">
+                </div>
+              </div>
+              <div class="form-group mb-2 row">
+                <div class="col-6">
+                  <label for="level"><i class="fa-solid fa-pen"></i> Level</label>
+                  <input type="text" id="level" class="form-control mt-2" disabled name="level" required value="<%= promotion.level %>">
+                </div>
+                <div class="col-6">
+                  <label for="discountValue"><i class="fa-solid fa-pen"></i> Discount Value</label>
+                  <input type="text" id="discountValue" class="form-control mt-2" disabled name="discountValue" value="<%= promotion.discountValue %>">
+                </div>
+              </div>
+              <% promotion.conditions.forEach(condition => { %>
+                <div class="form-group mb-2">
+                  <label>Condition</label>
+                  <div class="mb-2">
+                    <label for="limit"><i class="fa-solid fa-pen"></i> Limit</label>
+                    <input type="text" id="limit" class="form-control mt-2" disabled name="limit" value="<%= condition.limit %>">
+                  </div>
+                  <div>
+                    <label><i class="fa-solid fa-pen"></i> Books</label>
+                    <ul class="list-group">
+                      <% condition.books.forEach(book => { %>
+                        <li class="list-group-item"><%= book.title %></li>
+                      <% }) %>
+                    </ul>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

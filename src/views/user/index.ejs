@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../public/css/style.css">
+  <title>Users List</title>
+</head>
+<body>
+
+<div>
+  <div class="d-flex justify-content-between align-content-center my-3">
+    <h4 class="text-muted">List of Users</h4>
+    <!-- <button
+      type="button"
+      class="btn btn-success"
+      data-bs-toggle="modal"
+      data-bs-target="#createUserModal"
+    >
+      Create User
+    </button> -->
+  </div>
+  <div class="container">
+    <table class="table table-hover" style="cursor: pointer">
+      <thead class="rounded-top">
+        <tr>
+          <!-- <th scope="col">ID</th> -->
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Is Active</th>
+          <th scope="col">Is Admin</th>
+          <th scope="col">Phone Number</th>
+          <th scope="col">Address</th>
+          <!-- <th scope="col">Image</th> -->
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (Array.isArray(users.data) && users.data.length > 0) { %>
+          <% users.data.forEach(user => { %>
+            <tr>
+              <td>
+                <p
+                  class="text-truncate"
+                  style="max-width: 150px"
+                  title="<%= user.firstName %>"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <%= user.firstName %>
+                </p>
+              </td>
+              <td>
+                <p
+                  class="text-truncate"
+                  style="max-width: 150px"
+                  title="<%= user.lastName %>"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <%= user.lastName %>
+                </p>
+              </td>
+              <td>
+                <p
+                  class="text-truncate"
+                  style="max-width: 150px"
+                  title="<%= user.email %>"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <%= user.email %>
+                </p>
+              </td>
+              <td>
+                <% if (user.isActive) { %>
+                <span class="badge bg-success">Active</span>
+                <% } else { %>
+                <span class="badge bg-secondary">Inactive</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (user.isAdmin) { %>
+                <span class="badge bg-success">Active</span>
+                <% } else { %>
+                <span class="badge bg-secondary">Inactive</span>
+                <% } %>
+              </td>
+              <td>
+                <p
+                  class="text-truncate"
+                  style="max-width: 150px"
+                  title="<%= user.phoneNumber %>"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <%= user.phoneNumber %>
+                </p>
+              </td>
+              <td>
+                <p
+                  class="text-truncate"
+                  style="max-width: 150px"
+                  title="<%= user.address %>"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <%= user.address %>
+                </p>
+              </td>
+              <!-- <td>
+                <img
+                  class="text-truncate"
+                  style="max-width: 150px"
+                  src="<%= user.image %>"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                />
+              </td> -->
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-warning update-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#updateUserModal_<%= user.userId %>"
+                  title="Update User"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <i class="lni lni-pencil-alt"></i>
+                </button>
+                <button
+                  type="button"
+                  class="<%= user.isActive ? 'btn btn-danger delete-btn' : 'btn btn-secondary disabled' %>"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteUserModal_<%= user.userId %>"
+                  title="Delete User"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                >
+                  <i class="lni lni-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+            <%- include('../modals/users/updateUser.ejs', { user }); %>
+            <%- include('../modals/users/deleteUser.ejs', { user }); %>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="9" class="text-center">No users available</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- <%- include('../modals/users/createUser.ejs') %> -->
+</body>
+</html>

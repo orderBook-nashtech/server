@@ -1,0 +1,78 @@
+<!-- Delete Category Modal -->
+<div
+  class="modal fade"
+  id="deleteOrderModal_<%= order.orderId %>"
+  tabindex="-1"
+  aria-labelledby="deleteOrderLabel_<%= order.orderId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteOrderLabel_<%= order.orderId %>">
+          Delete Order
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to delete this order <b><%= order.orderId %></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+        <form id="orderDeleteForm_<%= order.orderId %>" class="d-inline">
+          <button
+            type="submit"
+            class="btn btn-danger"
+          >
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('orderDeleteForm_<%= order.orderId %>').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const deleteOrderBtn = event.target.querySelector('button[type="submit"]');
+
+      // Disable the button to prevent multiple clicks
+      // deleteOrderBtn.disabled = true;
+
+      fetch('/orders/<%= order.orderId %>', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            location.reload(); // Reload the page to see the updated category list
+          } else {
+            alert(data.message || 'Failed to delete category');
+            // deleteOrderBtn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error deleting order');
+          // deleteOrderBtn.disabled = false;
+        });
+    });
+  });
+</script>

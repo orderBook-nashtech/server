@@ -1,0 +1,81 @@
+<!--  -->
+<div class="modal fade" id="viewBookModal_<%= book.bookId %>" tabindex="-1" aria-labelledby="bookViewLabel_<%= book.bookId %>" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookViewLabel_<%= book.bookId %>">View Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="viewBookForm_<%= book.bookId %>" enctype="multipart/form-data">
+                    <input type="hidden" id="bookId" name="bookId" value="<%= book.bookId %>">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="title_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Title</label>
+                                <input type="text" id="title_<%= book.bookId %>" class="form-control mt-2" value="<%= book.title %>" name="title" required disabled>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="description_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Description</label>
+                                <input type="text" id="description_<%= book.bookId %>" class="form-control mt-2" value="<%= book.description %>" name="description" required disabled>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="image_<%= book.bookId %>"><i class="fa-solid fa-image"></i> Image</label>
+                                <input type="file" id="image_<%= book.bookId %>" class="form-control mt-2" name="image" disabled>
+                                <img src="<%= book.bookImage %>" alt="Book Image" style="width: 150px;">
+                            </div>
+                            <div class="form-check form-switch form-group mb-2" style="margin-left: -60px;">
+                                <label class="form-check-label" for="isActive_<%= book.bookId %>">Is Active</label>
+                                <input class="form-check-input" disabled type="checkbox" role="switch" id="isActive_<%= book.bookId %>" name="isActive" <%= book.isActive ? 'checked' : '' %> style="margin-left: 20px;">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="authorName_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Author Name</label>
+                                <input type="text" id="authorName_<%= book.bookId %>" class="form-control mt-2" value="<%= book.author.authorName %>" name="authorName" required disabled>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="unitPrice_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Unit Price</label>
+                                <input type="number" id="unitPrice_<%= book.bookId %>" class="form-control mt-2" value="<%= book.unitPrice %>" name="unitPrice" required disabled>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="rating_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Rating</label>
+                                <input type="number" min="0" max="5" id="rating_<%= book.bookId %>" value="<%= book.rating %>" class="form-control mt-2" name="rating" required disabled>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="quantityInStock_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Quantity In Stock</label>
+                                <input type="number" id="quantityInStock_<%= book.bookId %>" class="form-control mt-2" value="<%= book.quantityInStock %>" name="quantityInStock" required disabled>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="categoryName_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Category Name</label>
+                                <input type="text" id="categoryName_<%= book.bookId %>" class="form-control mt-2" value="<%= book.category.name %>" name="categoryName" required disabled>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check form-switch form-group mb-2" style="margin-left: -60px;">
+                                    <label class="form-check-label" for="onSale_<%= book.bookId %>">On Sale</label>
+                                    <input class="form-check-input" disabled type="checkbox" role="switch" id="onSale_<%= book.bookId %>" name="onSale" <%= book.onSale ? 'checked' : '' %> style="margin-left: 20px;">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="salePrice_<%= book.bookId %>"><i class="fa-solid fa-pen"></i> Sale Price</label>
+                                    <input type="number" id="salePrice_<%= book.bookId %>" class="form-control mt-2" value="<%= book.salePrice %>" name="salePrice" disabled>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="saleStartDate_<%= book.bookId %>"><i class="fa-solid fa-calendar"></i> Sale Start Date</label>
+                                    <input type="date" id="saleStartDate_<%= book.bookId %>" class="form-control mt-2" value="<%= book.saleStartDate ? book.saleStartDate.toISOString().split('T')[0] : '' %>" name="saleStartDate" disabled>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="saleEndDate_<%= book.bookId %>"><i class="fa-solid fa-calendar"></i> Sale End Date</label>
+                                    <input type="date" id="saleEndDate_<%= book.bookId %>" class="form-control mt-2" value="<%= book.saleEndDate ? book.saleEndDate.toISOString().split('T')[0] : '' %>" name="saleEndDate" disabled>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,60 @@
+<!-- User Creation Modal Form -->
+<div class="modal fade" id="deleteBookModal_<%= book.bookId %>" tabindex="-1" aria-labelledby="deleteBookLabel_<%= book.bookId %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteBookLabel_<%= book.bookId %>">Delete A Author</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Do you want to delete this book <%= book.title %>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn close-btn" data-dismiss="modal">Close</button> -->
+          <form id="bookDeleteForm_<%= book.bookId %>" class="d-inline">
+            <input type="hidden" name="bookId" value="<%= book.bookId %>">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+      </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const deleteForm = document.getElementById('bookDeleteForm_<%= book.bookId %>');
+      deleteForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+  
+        const deleteAuthorBtn = event.target.querySelector('button[type="submit"]');
+  
+        // Disable the button to prevent multiple clicks
+        // deleteAuthorBtn.disabled = true;
+  
+        fetch(`/books/${event.target.bookId.value}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteBookModal_<%= book.bookId %>'));
+            deleteModal.hide();
+            location.reload(); // Reload the page to see the updated author list
+          } else {
+            alert(data.message || 'Failed to delete author');
+            // deleteAuthorBtn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error deleting book');
+        //   deleteAuthorBtn.disabled = false;
+        });
+      });
+    });
+  </script>
+    

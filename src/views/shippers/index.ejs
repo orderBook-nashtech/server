@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shipper List</title>
+</head>
+<body>
+    <h2>Manage Shippers</h2>
+    <button
+          type="button"
+          class="btn create-btn"
+          data-bs-toggle="modal"
+          data-bs-target="#createShipperModal"
+        >
+          Create Shipper
+        </button>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Shipper Name</th>
+          <th scope="col">Phone Number</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% shippers.forEach(shipper => { %>
+          <tr>
+            <th scope="row"><%= shipper.shipperId %></th>
+            <td><%= shipper.shipperName %></td>
+            <td><%= shipper.phone %></td>
+            <td class="d-flex flex-direction-column">
+            <button 
+                  class="update-btn mx-2" 
+                  data-target="#updateShipperModal_<%= shipper.shipperId %>" 
+                  data-toggle="modal" 
+                >
+                <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+            <button 
+                  class="delete-btn mx-2" 
+                  data-target="#deleteShipperModal_<%= shipper.shipperId %>" 
+                  data-toggle="modal" 
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+          </td>
+          </tr>
+              <%- include('../modals/shippers/updateShipper.ejs', { shipper: shipper }) %>
+              <%- include('../modals/shippers/deleteShipper.ejs', { shipper: shipper }) %>
+        <% }); %>
+      </tbody>
+    </table>
+</body>
+</html>

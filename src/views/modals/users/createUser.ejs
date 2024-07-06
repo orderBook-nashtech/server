@@ -1,0 +1,114 @@
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Create A New User</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createUserForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="firstName"><i class="fa-solid fa-pen"></i> First Name</label>
+                                <input type="text" id="firstName" class="form-control mt-2" name="firstName" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="lastName"><i class="fa-solid fa-pen"></i> Last Name</label>
+                                <input type="text" id="lastName" class="form-control mt-2" name="lastName" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="email"><i class="fa-solid fa-envelope"></i> Email</label>
+                                <input type="email" id="email" class="form-control mt-2" name="email" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+                                <input type="password" id="password" class="form-control mt-2" name="password" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label for="phoneNumber"><i class="fa-solid fa-phone"></i> Phone</label>
+                                <input type="text" id="phoneNumber" class="form-control mt-2" name="phoneNumber" required>
+                            </div>
+                            <div class="form-check form-switch form-group mb-2">
+                                <label class="form-check-label" for="isActive">Is Active</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="isActive" name="isActive" checked>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="image"><i class="fa-solid fa-image"></i> Image</label>
+                                <input type="file" id="image" class="form-control mt-2" name="image" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="address"><i class="fa-solid fa-location-dot"></i> Address</label>
+                                <input type="text" id="address" class="form-control mt-2" name="address" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn close-btn" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#createUserForm').on('submit', function(event) {
+        event.preventDefault();
+
+        let formData = new FormData(this);
+        let isActiveValue = $('#isActive').is(':checked');
+
+        let imageFile = $('#image')[0].files[0];
+        let reader = new FileReader();
+
+        reader.readAsDataURL(imageFile);
+
+        reader.onload = function() {
+            let base64Image = reader.result.split(',')[1];
+            
+            let data = {
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                email: $('#email').val(),
+                password: $('#password').val(),
+                phoneNumber: $('#phoneNumber').val(),
+                isActive: isActiveValue,
+                image: base64Image,
+                address: $('#address').val()
+            };
+
+            $.ajax({
+                url: 'http://localhost:3001/user',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(response) {
+                    console.log('Success:', response);
+                    alert('User created successfully');
+                    $('#createUserModal').modal('hide');
+                    $('#createUserForm')[0].reset();
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        alert('Error: ' + xhr.responseJSON.message);
+                    } else {
+                        alert('Failed to create user. Please check the data and try again.');
+                    }
+                }
+            });
+        };
+
+        reader.onerror = function(error) {
+            console.error('Error reading image:', error);
+            alert('Failed to read image. Please try again.');
+        };
+    });
+});
+
+</script>

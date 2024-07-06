@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../public/css/style.css">
+  <title>Books List</title>
+</head>
+<body>
+
+<div>
+  <div class="d-flex justify-content-between align-content-center my-3">
+    <h4 class="text-muted">List of Books</h4>
+    <form id="searchForm" class="d-flex" method="GET" action="/page/books">
+      <input
+        type="text"
+        name="search"
+        class="form-control me-2"
+        placeholder="Search books"
+        value="<%= typeof search !== 'undefined' ? search : '' %>"
+        oninput="fetchBooks()"
+        style="width: 600px;"
+      />
+    </form>
+    <button
+      type="button"
+      class="btn btn-success"
+      data-bs-toggle="modal"
+      data-bs-target="#createBookModal"
+    >
+      Create Book
+    </button>
+  </div>
+  <table class="table table-hover" style="cursor: pointer">
+    <thead class="rounded-top">
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Unit Price</th>
+        <th scope="col">Is Active</th>
+        <th scope="col">Quantity In Stock</th>
+        <th scope="col">Image</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="booksTableBody">
+      <% books.forEach(book => { %>
+      <tr>
+        <td>
+          <p
+            class="text-truncate"
+            style="max-width: 150px"
+            title="<%= book.title %>"
+          >
+            <%= book.title %>
+          </p>
+        </td>
+        <td>
+          <p
+            class="text-truncate"
+            style="max-width: 150px"
+            title="<%= book.unitPrice %>"
+          >
+            <%= book.unitPrice %>
+          </p>
+        </td>
+        <td>
+          <% if (book.isActive) { %>
+          <span class="badge bg-success">Active</span>
+          <% } else { %>
+          <span class="badge bg-secondary">Inactive</span>
+          <% } %>
+        </td>
+        <td>
+          <p
+            class="text-truncate"
+            style="max-width: 150px"
+            title="<%= book.quantityInStock %>"
+          >
+            <%= book.quantityInStock %>
+          </p>
+        </td>
+        <td><img 
+          src="<%= book.bookImage %>" 
+          alt="Book Image"
+          title="<%= book.bookImage %>" 
+          style="width: 50px; height: auto;"></td>
+        <td>
+          <button
+            type="button"
+            class="view-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#viewBookModal_<%= book.bookId %>"
+          >
+          <i class="fa-solid fa-eye"></i>
+          </button>
+          <button
+            type="button"
+            class="update-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#updateBookModal_<%= book.bookId %>"
+          >
+            <i class="lni lni-pencil-alt"></i>
+          </button>
+          <button
+            type="button"
+            class="delete-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteBookModal_<%= book.bookId %>"
+          >
+            <i class="lni lni-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+      <%- include('../modals/books/updateBook.ejs', { book }); %>
+      <%- include('../modals/books/viewBook.ejs', { book }); %>
+      <%- include('../modals/books/deleteBook.ejs', { book }); %>
+      <% }) %>
+    </tbody>
+  </table>
+  <!-- Pagination Controls -->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center" id="paginationControls">
+      <% if (page > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= page - 1 %>&limit=<%= limit %><%= search ? `&search=${search}` : '' %>" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      <% } %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= page === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>&limit=<%= limit %><%= search ? `&search=${search}` : '' %>"><%= i %></a>
+        </li>
+      <% } %>
+      <% if (page < totalPages) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= page + 1 %>&limit=<%= limit %><%= search ? `&search=${search}` : '' %>" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
+
+<%- include('../modals/books/createBook.ejs') %>
+
+<script>
+  async function fetchBooks() {
+    const searchForm = document.getElementById('searchForm');
+    const formData = new FormData(searchForm);
+    const params = new URLSearchParams(formData);
+    const response = await fetch(`/page/books?${params.toString()}`);
+    const html = await response.text();
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const booksTableBody = doc.getElementById('booksTableBody').innerHTML;
+    const paginationControls = doc.getElementById('paginationControls').innerHTML;
+
+    document.getElementById('booksTableBody').innerHTML = booksTableBody;
+    document.getElementById('paginationControls').innerHTML = paginationControls;
+  }
+</script>
+
+</body>
+</html>

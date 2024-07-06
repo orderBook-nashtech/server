@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promotion List</title>
+  <!-- Include Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Include Font Awesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <div class="d-flex justify-content-between align-content-center my-3">
+      <h4 class="text-muted">List of Promotions</h4>
+      <button type="button" 
+        class="btn btn-success" 
+        data-bs-toggle="modal" 
+        data-bs-target="#createPromotionModal">
+        Create Promotion
+      </button>
+    </div>
+    <table class="table table-hover" style="cursor: pointer">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Code</th>
+          <th scope="col">Start Date</th>
+          <th scope="col">End Date</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% promotions.forEach(promotion => { %>
+          <tr>
+            <td><%= promotion.code %></td>
+            <td><%= moment(promotion.startDate).format('YYYY-MM-DD') %></td>
+            <td><%= moment(promotion.endDate).format('YYYY-MM-DD') %></td>
+            <td><%= promotion.status %></td>
+            <td class="d-flex">
+              <button type="button" class="btn btn-info btn-sm" 
+              data-bs-toggle="modal"
+                data-bs-target="#viewPromotionModal_<%= promotion.promotionId %>">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-sm mx-2"
+              data-bs-toggle="modal"
+              data-bs-target="#updatePromotionModal_<%= promotion.promotionId %>"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                data-bs-target="#deletePromotionModal_<%= promotion.promotionId %>">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <%- include('../modals/promotions/viewPromotion.ejs', {promotion}) %>
+          <%- include('../modals/promotions/updatePromotion.ejs', {promotion}) %>
+          <%- include('../modals/promotions/deletePromotion.ejs', {promotion}) %>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <%- include('../modals/promotions/createPromotion.ejs') %>
+
+  <!-- Include Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

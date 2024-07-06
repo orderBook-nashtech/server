@@ -1,0 +1,92 @@
+<!-- User Creation Modal Form -->
+<div class="modal fade" 
+    id="createShipperModal" 
+    tabindex="-1" role="dialog" 
+    aria-labelledby="createShipperLabel" 
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createShipperLabel">Create A New Shipper</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createShipperForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group mb-2">
+                                <label for="name"><i class="fa-solid fa-pen"></i> Shipper Name</label>
+                                <input type="text" id="name" class="form-control mt-2" name="name" required>
+                            </div>
+                            <div class="form-check form-switch form-group mb-2">
+                                <label class="form-check-label" for="isActive">Is Active</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="isActive" name="isActive" checked>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn close-btn" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn submit-btn" id="createShipperBtn">
+                            <span id="createShipperBtnText">Submit</span>
+                            <span id="createShipperBtnSpinner" class="d-none"><i class="fa fa-spinner fa-spin"></i></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function turnOffSpinner(createShipperBtn, createShipperBtnText, createShipperBtnSpinner) {
+        createShipperBtnText.classList.remove('d-none');
+        createShipperBtnSpinner.classList.add('d-none');
+        createShipperBtn.disabled = false;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('createShipperForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+    
+            const createShipperBtn = document.getElementById('createShipperBtn');
+            const createShipperBtnText = document.getElementById('createShipperBtnText');
+            const createShipperBtnSpinner = document.getElementById('createShipperBtnSpinner');
+    
+            // Show the spinner and disable the button
+            createShipperBtnText.classList.add('d-none');
+            createShipperBtnSpinner.classList.remove('d-none');
+            createShipperBtn.disabled = true;
+    
+            // Get form data
+            const name = document.getElementById('name').value;
+            const isActive = document.getElementById('isActive').checked;
+            const payload = { name: name, isActive: isActive };
+    
+            fetch('/shippers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    location.reload(); // Reload the page to see the updated category
+                } else {
+                    alert(data.message || 'Failed to create shipper');
+                    turnOffSpinner(createShipperBtn, createShipperBtnText, createShipperBtnSpinner);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error creating Shipper');
+                turnOffSpinner(createShipperBtn, createShipperBtnText, createShipperBtnSpinner);
+            });
+        });
+    });
+    </script>
+    

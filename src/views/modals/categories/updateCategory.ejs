@@ -1,0 +1,111 @@
+<!-- Update Category Modal -->
+<div
+  class="modal fade"
+  id="updateCategoryModal_<%= category.categoryId %>"
+  tabindex="-1"
+  aria-labelledby="categoryUploadLabel_<%= category.categoryId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="categoryUploadLabel_<%= category.categoryId %>">
+          Update Category
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="categoryUpdateForm_<%= category.categoryId %>">
+          <div class="mb-3">
+            <label for="name_<%= category.categoryId %>" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name_<%= category.categoryId %>"
+              value="<%= category.name %>"
+              name="name"
+              required
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-warning"
+              id="updateCategoryBtn_<%= category.categoryId %>"
+            >
+              <span id="updateCategoryBtnText_<%= category.categoryId %>">Update Category</span>
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                id="updateCategoryBtnSpinner_<%= category.categoryId %>"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function turnOffSpinner(updateCategoryBtn, updateCategoryBtnText, updateCategoryBtnSpinner) {
+    updateCategoryBtnText.classList.remove('d-none');
+    updateCategoryBtnSpinner.classList.add('d-none');
+    updateCategoryBtn.disabled = false;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('categoryUpdateForm_<%= category.categoryId %>').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const updateCategoryBtn = document.getElementById('updateCategoryBtn_<%= category.categoryId %>');
+      const updateCategoryBtnText = document.getElementById('updateCategoryBtnText_<%= category.categoryId %>');
+      const updateCategoryBtnSpinner = document.getElementById('updateCategoryBtnSpinner_<%= category.categoryId %>');
+
+      // Show the spinner and disable the button
+      updateCategoryBtnText.classList.add('d-none');
+      updateCategoryBtnSpinner.classList.remove('d-none');
+      updateCategoryBtn.disabled = true;
+
+      // Get form data
+      const name = document.getElementById('name_<%= category.categoryId %>').value;
+      const payload = { name: name };
+
+      fetch('/categories/<%= category.categoryId %>', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            location.reload(); // Reload the page to see the updated category
+          } else {
+            alert(data.message || 'Failed to update category');
+            turnOffSpinner(updateCategoryBtn, updateCategoryBtnText, updateCategoryBtnSpinner);
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error updating category');
+          turnOffSpinner(updateCategoryBtn, updateCategoryBtnText, updateCategoryBtnSpinner);
+        });
+    });
+  });
+</script>

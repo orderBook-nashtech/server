@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Promotion</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="modal fade" id="createPromotionModal" tabindex="-1" role="dialog" aria-labelledby="createPromotionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createPromotionModalLabel">Create A New Promotion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="createPromotionForm">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group mb-2 row">
+                <div class="col-6">
+                  <label for="code"><i class="fa-solid fa-pen"></i> Code</label>
+                  <input type="text" id="code" class="form-control mt-2" name="code" required>
+                </div>
+                <div class="col-6">
+                  <label for="startDate"><i class="fa-solid fa-pen"></i> Start Date</label>
+                  <input type="date" id="startDate" class="form-control mt-2" name="startDate" required>
+                </div>
+              </div>
+              <div class="form-group mb-2 row">
+                <div class="col-6">
+                  <label for="endDate"><i class="fa-solid fa-pen"></i> End Date</label>
+                  <input type="date" id="endDate" class="form-control mt-2" name="endDate" required>
+                </div>
+                <div class="col-6">
+                  <label for="status"><i class="fa-solid fa-pen"></i> Status</label>
+                  <select id="status" class="form-control mt-2" name="status" required>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group mb-2 row">
+                <div class="col-6">
+                  <label for="level"><i class="fa-solid fa-pen"></i> Level</label>
+                  <input type="text" step="0.01" id="level" class="form-control mt-2" name="level" required>
+                </div>
+                <div class="col-6">
+                  <label for="discountValue"><i class="fa-solid fa-pen"></i> Discount Value</label>
+                  <input type="number" step="0.01" id="discountValue" class="form-control mt-2" name="discountValue" required>
+                </div>
+              </div>
+              <div class="form-group mb-2">
+                <button type="button" class="btn btn-primary" id="setupConditionsButton">Setup conditions</button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="conditionModal" tabindex="-1" role="dialog" aria-labelledby="conditionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="conditionModalLabel">Conditions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="conditionForm">
+          <div class="form-group">
+            <label for="limit">Limit</label>
+            <input type="number" id="limit" class="form-control" name="limit" required>
+          </div>
+          <div class="form-group">
+            <label for="limitOrderValue">Limit Order Value</label>
+            <input type="number" id="limitOrderValue" class="form-control" name="limitOrderValue" required>
+          </div>
+          <div class="form-group">
+            <label for="productIds">Book Titles</label>
+            <div id="bookCheckboxes" class="form-control mt-2" style="height: auto;">
+              <!-- Checkboxes will be populated here -->
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" id="saveConditionButton">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let conditions = [];
+
+    // Handle form submission
+    document.getElementById('createPromotionForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Fetch the latest promotion codes before submission
+      fetch('http://localhost:3001/promotions')
+        .then(response => response.json())
+        .then(data => {
+          const code = document.getElementById('code').value;
+          // Check for duplicate promotion codes
+          if (data.some(promotion => promotion.code === code)) {
+            alert('Error creating promotion: Duplicate promotion code found. Please use unique promotion codes.');
+            return;
+          }
+
+          // Prepare promotion data
+          const startDate = new Date(document.getElementById('startDate').value).toISOString();
+          const endDate = new Date(document.getElementById('endDate').value).toISOString();
+          const status = document.getElementById('status').value;
+          const level = parseFloat(document.getElementById('level').value);
+          const discountValue = parseFloat(document.getElementById('discountValue').value);
+
+          // Check and prepare conditions
+          conditions.forEach(condition => {
+            condition.limit = parseInt(condition.limit, 10);
+            condition.productIds = condition.productIds.map(id => parseInt(id, 10));
+          });
+
+          const promotion = {
+            code,
+            startDate,
+            endDate,
+            status,
+            level,
+            discountValue,
+            conditions
+          };
+
+          // Submit promotion data
+          fetch('http://localhost:3001/promotions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(promotion)
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.statusCode === 201 || data.statusCode === 200) {
+              alert('Promotion created successfully');
+              $('#createPromotionModal').modal('hide');
+              location.reload(); // Reload the page to update the promotions list
+            } else {
+              throw new Error(data.message || 'Unknown error occurred');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert(`Error creating promotion: ${error.message}`);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching promotion codes:', error);
+          alert(`Error fetching promotion codes: ${error.message}`);
+        });
+    });
+
+    // Open condition modal and load books
+    document.getElementById('setupConditionsButton').addEventListener('click', function() {
+      $('#conditionModal').modal('show');
+
+      // Fetch books from the server and populate the checkboxes
+      fetch('http://localhost:3001/books')
+        .then(response => response.json())
+        .then(data => {
+          const bookCheckboxes = document.getElementById('bookCheckboxes');
+          bookCheckboxes.innerHTML = ''; // Clear existing checkboxes
+          console.log("books: ",data);
+
+          data.data.books.forEach(book => {
+            const checkbox = document.createElement('div');
+            checkbox.className = 'form-check';
+            checkbox.innerHTML = `
+              <input class="form-check-input" type="checkbox" value="${book.bookId}" id="book_${book.bookId}">
+              <label class="form-check-label" for="book_${book.bookId}">${book.title}</label>
+            `;
+            bookCheckboxes.appendChild(checkbox);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching books:', error);
+        });
+    });
+
+    // Save condition
+    document.getElementById('saveConditionButton').addEventListener('click', function() {
+      const limit = document.getElementById('limit').value;
+      const limitOrderValue = document.getElementById('limitOrderValue').value;
+      const productIds = Array.from(document.querySelectorAll('#bookCheckboxes .form-check-input:checked')).map(checkbox => checkbox.value);
+
+      const condition = {
+        limit,
+        limitOrderValue,
+        productIds
+      };
+
+      conditions.push(condition);
+
+      $('#conditionModal').modal('hide');
+    });
+  });
+</script>
+</body>
+</html>

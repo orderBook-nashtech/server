@@ -1,0 +1,111 @@
+<!-- Update Category Modal -->
+<div
+  class="modal fade"
+  id="updateShipperModal_<%= shipper.shipperId %>"
+  tabindex="-1"
+  aria-labelledby="shipperUploadLabel_<%= shipper.shipperId %>"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shipperUploadLabel_<%= shipper.shipperId %>">
+          Update Shipper
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="createShipperForm<%= shipper.shipperId %>">
+          <div class="mb-3">
+            <label for="name_<%= shipper.shipperId %>" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name_<%= shipper.shipperId %>"
+              value="<%= shipper.shipperName %>"
+              name="name"
+              required
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-warning"
+              id="updateShipperBtn_<%= shipper.shipperId %>"
+            >
+              <span id="updateShipperBtnText_<%= shipper.shipperId %>">Update Shipper</span>
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                id="updateCategoryBtnSpinner_<%= shipper.shipperId %>"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function turnOffSpinner(updateShipperBtn, updateShipperBtnText, updateShipperBtnSpinner) {
+    updateShipperBtnText.classList.remove('d-none');
+    updateShipperBtnSpinner.classList.add('d-none');
+    updateShipperBtn.disabled = false;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('createShipperForm<%= shipper.shipperId %>').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const updateShipperBtn = document.getElementById('updateShipperBtn_<%= shipper.shipperId %>');
+      const updateShipperBtnText = document.getElementById('updateShipperBtnText_<%= shipper.shipperId %>');
+      const updateShipperBtnSpinner = document.getElementById('updateCategoryBtnSpinner_<%= shipper.shipperId %>');
+
+      // Show the spinner and disable the button
+      updateShipperBtnText.classList.add('d-none');
+      updateShipperBtnSpinner.classList.remove('d-none');
+      updateShipperBtn.disabled = true;
+
+      // Get form data
+      const name = document.getElementById('name_<%= shipper.shipperId %>').value;
+      const payload = { name: name };
+
+      fetch('/shippers/<%= shipper.shipperId %>', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            location.reload(); // Reload the page to see the updated category
+          } else {
+            alert(data.message || 'Failed to update category');
+            turnOffSpinner(updateCategoryBtn, updateCategoryBtnText, updateCategoryBtnSpinner);
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error updating category');
+          turnOffSpinner(updateCategoryBtn, updateCategoryBtnText, updateCategoryBtnSpinner);
+        });
+    });
+  });
+</script>
